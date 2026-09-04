@@ -1,7 +1,7 @@
 // Reader service worker.
 // The app shell is versioned per build; books and fonts live in a persistent cache
 // so a rebuild never evicts a book you've already opened.
-const VERSION = 'shell-e8a8050ea9';
+const VERSION = 'shell-80f1e52c75';
 const BOOKS = 'reader-books-v1';
 const SHELL = ['./', './index.html', './app.css', './app.js', './manifest.webmanifest', './meta.json', './library.bin', './icon-192.png', './icon-512.png'];
 

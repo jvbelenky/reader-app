@@ -130,7 +130,8 @@ def extract_pdf(path):
         if not near_edge:
             return False
         t = l["txt"]
-        if re.fullmatch(r"[\s\d\-–—|.]+", t) or roman.match(t) or re.fullmatch(r"(page\s*)?\d+(\s*(of|/)\s*\d+)?", t, re.I):
+        styled = l["bold"] or l["size"] >= body_size * 1.18   # page numbers are plain; styled numerals are headings
+        if not styled and (re.fullmatch(r"[\s\d\-–—|.]+", t) or roman.match(t) or re.fullmatch(r"(page\s*)?\d+(\s*(of|/)\s*\d+)?", t, re.I)):
             return True
         return norm(t) in repeated and (i < 2 or i >= n - 2)
 
@@ -432,8 +433,19 @@ def slugify(name):
 
 def pretty_title(stem):
     s = re.sub(r"\[.*?\]", "", stem)
-    s = re.sub(r"[_\-]+", " ", s).strip()
+    s = re.sub(r"[_]+", " ", s)
+    s = re.sub(r"\s+", " ", s).strip()
     return s or stem
+
+
+def load_overrides():
+    """Optional books/meta.json: {"file name.pdf": {"title": "...", "author": "..."}}"""
+    p = os.path.join(BOOKS, "meta.json")
+    try:
+        return json.load(open(p, encoding="utf-8")) if os.path.exists(p) else {}
+    except ValueError as e:
+        print(f"  ! books/meta.json is not valid JSON ({e}); ignoring", file=sys.stderr)
+        return {}
 
 
 def book_html(chapters):
@@ -454,6 +466,7 @@ def build():
     key = derive_key(cfg["password"], cfg["salt"])
     os.makedirs(os.path.join(DIST, "books"), exist_ok=True)
     library, keep = [], set()
+    overrides = load_overrides()
     files = sorted(f for f in os.listdir(BOOKS) if f.lower().endswith(FORMATS)) if os.path.isdir(BOOKS) else []
     for fn in files:
         path = os.path.join(BOOKS, fn)
@@ -477,8 +490,9 @@ def build():
         body = book_html(chapters).encode("utf-8")
         changed = write_if_changed(os.path.join(DIST, "books", book_id + ".bin"), encrypt(key, body, b"book:" + book_id.encode()))
         keep.add(book_id + ".bin")
+        ov = overrides.get(fn, {})
         library.append({
-            "id": book_id, "title": title or pretty_title(stem), "author": author,
+            "id": book_id, "title": ov.get("title") or title or pretty_title(stem), "author": ov.get("author") or author,
             "words": words, "chapters": [c["title"] for c in chapters if c["title"]],
             "format": ext[1:], "added": int(os.path.getmtime(path)),
         })
