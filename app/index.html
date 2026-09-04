@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#F6F6F3">
+<title>Reader</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400;1,7..72,600&family=Fraunces:opsz,wght@9..144,300&display=swap">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<!-- ============ lock ============ -->
+<section id="lock" hidden>
+  <form id="lockForm" autocomplete="on">
+    <h1>Reader</h1>
+    <p class="lock-hint">Enter the passphrase to unlock your library on this device.</p>
+    <label class="visually-hidden" for="pass">Passphrase</label>
+    <input id="pass" type="password" name="password" autocomplete="current-password" placeholder="Passphrase" autocapitalize="off" autocorrect="off" spellcheck="false" required>
+    <button type="submit" id="unlock">Unlock</button>
+    <p class="lock-err" id="lockErr" role="alert" hidden></p>
+  </form>
+</section>
+
+<!-- ============ shelf ============ -->
+<section id="shelf" hidden>
+  <header class="shelf-head">
+    <h1>Library</h1>
+    <button class="ib aa" id="shelfSet" aria-label="Text settings" title="Text settings">Aa</button>
+  </header>
+  <p class="shelf-empty" id="shelfEmpty" hidden>No books yet. Drop a PDF, EPUB, or text file into the <code>books</code> folder and push.</p>
+  <ol class="shelf-list" id="shelfList"></ol>
+  <p class="shelf-foot" id="shelfFoot"></p>
+</section>
+
+<!-- ============ reader ============ -->
+<section id="reader" hidden>
+  <header id="bar">
+    <button class="ib" id="btnBack" aria-label="Library" title="Library"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div class="title"><span class="book" id="barTitle"></span><span class="where" id="where"></span></div>
+    <button class="ib" id="btnToc" aria-label="Chapters" title="Chapters"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></button>
+    <button class="ib aa" id="btnSet" aria-label="Text settings" title="Text settings">Aa</button>
+  </header>
+  <div id="progress"><i></i></div>
+  <main id="book"></main>
+</section>
+
+<div id="scrim"></div>
+<section class="sheet" id="toc" aria-label="Chapters">
+  <div class="grab"></div>
+  <h3>Chapters</h3>
+  <ol></ol>
+</section>
+<section class="sheet" id="set" aria-label="Text settings">
+  <div class="grab"></div>
+  <h3>Text</h3>
+  <div class="row"><span class="lbl">Size</span>
+    <div class="stepper"><button id="sizeDn" class="sm" aria-label="Smaller text">A</button><span class="val" id="sizeVal">19 px</span><button id="sizeUp" class="lg" aria-label="Larger text">A</button></div></div>
+  <div class="row"><span class="lbl">Spacing</span>
+    <div class="seg"><button data-set="lh:1.45">Tight</button><button data-set="lh:1.62">Normal</button><button data-set="lh:1.85">Loose</button></div></div>
+  <div class="row"><span class="lbl">Font</span>
+    <div class="seg"><button data-set="font:literata" class="lit">Literata</button><button data-set="font:serif" class="ser">Georgia</button><button data-set="font:sans">Sans</button></div></div>
+  <h3 style="margin-top:14px">Theme</h3>
+  <div class="row"><span class="lbl">Look</span>
+    <div class="seg"><button data-set="mode:auto">Auto</button><button data-set="mode:light">Snow</button><button data-set="mode:sepia">Paper</button><button data-set="mode:dark">Night</button></div></div>
+  <h3 style="margin-top:14px">Opening</h3>
+  <div class="row"><span class="lbl">Start on</span>
+    <div class="seg"><button data-set="resume:last">Last book</button><button data-set="resume:shelf">Library</button></div></div>
+  <h3 style="margin-top:14px">Privacy</h3>
+  <div class="row"><span class="lbl">This device stays unlocked</span><button class="pill" id="lockBtn">Lock now</button></div>
+  <p class="note">Your place in each book and these settings are saved on this device. Books you've opened once stay readable offline. Tap the text to hide or show the top bar.</p>
+</section>
+<div id="toast" role="status"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

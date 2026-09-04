@@ -1,0 +1,6 @@
+/books/
+/.reader.json
+/dist/
+.cache/
+*:Zone.Identifier
+__pycache__/
